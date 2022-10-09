@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import { Parameter } from "aws-sdk/clients/ssm";
+
 const SSM = new AWS.SSM();
 
 export type ParameterNames = "all_users" | "bot_token";

@@ -5,17 +5,7 @@ const SSM = new AWS.SSM();
 
 type ParameterNames = "all_users" | "bot_token";
 
-let cachedParameters: Record<ParameterNames, string> | null = null;
-
-export async function getAwsParameters(): Promise<Record<ParameterNames, string>> {
-    if (!cachedParameters) {
-        cachedParameters = await getAwsParametersFromStore();
-    }
-    return cachedParameters;
-
-}
-
-async function getAwsParametersFromStore(): Promise<Record<ParameterNames, string>> {
+export async function getAwsParametersFromStore(): Promise<Record<ParameterNames, string>> {
     const params = {
         Names: ['all_users', 'bot_token'],
         WithDecryption: true
@@ -27,4 +17,5 @@ async function getAwsParametersFromStore(): Promise<Record<ParameterNames, strin
         ({ ...result, [k.Name!]: k.Value }), defaultParams) ?? defaultParams;
 
 }
+
 

@@ -6,7 +6,7 @@ export async function parseAndHandleRequest(chat: Chat, text: string) {
     if (text.startsWith("/echo")) {
         return sendTextToUser(model.params.bot_token, chat.id, text.substring(6))
     }
-    else if (text == "ciccio") {
+    else if (text == "/ciccio") {
         return sendTextToUser(model.params.bot_token, chat.id, "culo")
     }
     else if (text == "/all") {

@@ -6,12 +6,13 @@
         "allowJs": true,
         "outDir": ".build",
         "moduleResolution": "node",
+        "module": "ESNext",
         "lib": [
-            "es2015"
+            "es2017"
         ],
         "allowSyntheticDefaultImports": true,
         "rootDir": "./",
         "strict": true,
-        "target": "es6"
+        "target": "es2017"
     }
 }

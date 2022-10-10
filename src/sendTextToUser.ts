@@ -5,7 +5,7 @@ export async function sendTextToUser(botToken: string, chatId: string, text: str
         method: 'GET',
         uri: `https://api.telegram.org/bot${botToken}/sendMessage`,
         qs: {
-            chatId,
+            chat_id: chatId,
             text
         }
     };

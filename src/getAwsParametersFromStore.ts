@@ -3,14 +3,19 @@ import { Parameter } from "aws-sdk/clients/ssm";
 
 const SSM = new AWS.SSM();
 
-type ParameterNames = "all_users" | "bot_token";
+const parameters = ['all_users', 'bot_token'] as const;
+type ParameterNames = typeof parameters[number];
+
+const defaultParams = parameters.reduce((result, current) => {
+    result[current] = "";
+    return result;
+}, {} as Record<ParameterNames, string>)
 
 export async function getAwsParametersFromStore(): Promise<Record<ParameterNames, string>> {
     const params = {
-        Names: ['all_users', 'bot_token'],
+        Names: [...parameters],
         WithDecryption: true
     };
-    const defaultParams = { "all_users": "", "bot_token": "" };
     const request = await SSM.getParameters(params).promise();
 
     return request?.Parameters?.reduce<Record<ParameterNames, string>>((result: Record<ParameterNames, string>, k: Parameter) =>

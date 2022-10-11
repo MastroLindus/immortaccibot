@@ -3,7 +3,8 @@ import { quotesHandler, quoteStats } from "./quotesHandler.js"
 import { sendTextToUser } from "./sendTextToUser.js"
 import { Chat } from "./TelegramTypes.js"
 
-export async function parseAndHandleRequest(chat: Chat, text: string) {
+export async function parseAndHandleRequest(chat: Chat, initialText: string) {
+    const text = initialText.replace("@immortacci_bot", "");
     if (text.startsWith("/echo")) {
         return sendTextToUser(model.params.bot_token, chat.id, text.substring(6))
     }

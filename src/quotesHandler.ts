@@ -16,7 +16,7 @@ function quoteToString(q: Quote): string {
 
 export function quoteStats(chat: Chat) {
     const sums = quotesJson.reduce<Record<string, number>>((res, curr) => {
-        res[curr.author] = (res[curr.author] ?? 0) + 1;
+        res[curr.author.toLowerCase()] = (res[curr.author.toLowerCase()] ?? 0) + 1;
         return res;
     }, {});
     const sortedSums = Object.entries(sums).sort(([, a], [, b]) => b - a).filter(([, a]) => a >= 10);

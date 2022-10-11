@@ -13,7 +13,7 @@ export async function parseAndHandleRequest(chat: Chat, text: string) {
     else if (text === "/cita") {
         return quotesHandler(chat);
     }
-    else if (text === "/cita-stats") {
+    else if (text === "/citastats") {
         return quoteStats(chat);
     }
     else if (text.startsWith("/cita")) {

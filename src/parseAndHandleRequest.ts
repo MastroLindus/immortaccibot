@@ -1,5 +1,5 @@
 import { model } from "./handler.js"
-import { quotesHandler } from "./quotesHandler.js"
+import { quotesHandler, quoteStats } from "./quotesHandler.js"
 import { sendTextToUser } from "./sendTextToUser.js"
 import { Chat } from "./TelegramTypes.js"
 
@@ -12,6 +12,9 @@ export async function parseAndHandleRequest(chat: Chat, text: string) {
     }
     else if (text === "/cita") {
         return quotesHandler(chat);
+    }
+    else if (text === "/cita-stats") {
+        return quoteStats(chat);
     }
     else if (text.startsWith("/cita")) {
         return quotesHandler(chat, text.substring(6));

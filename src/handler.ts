@@ -1,6 +1,6 @@
 import { getAwsParametersFromStore } from "./getAwsParametersFromStore.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
-import { TelegramEvent, TelegramMessageEvent } from "./TelegramTypes.js";
+import { TelegramEvent, TelegramMessageEvent } from "./telegramApi.js";
 
 export const model = {
   params: await getAwsParametersFromStore()

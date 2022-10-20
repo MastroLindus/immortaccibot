@@ -1,37 +1,42 @@
 import { model } from "./handler.js"
 import { quotesHandler, quoteStats } from "./quotesHandler.js"
-import { sendTextToUser } from "./sendTextToUser.js"
-import { Chat } from "./TelegramTypes.js"
+import { sendTextToUser, Chat } from "./telegramApi.js"
 
-export async function parseAndHandleRequest(chat: Chat, initialText: string) {
-    const text = initialText.replace("@immortacci_bot", "");
-    if (text.startsWith("/echo")) {
-        return sendTextToUser(model.params.bot_token, chat.id, text.substring(6))
-    }
-    else if (text == "/ciccio") {
-        return sendTextToUser(model.params.bot_token, chat.id, "culo")
-    }
-    else if (text === "/cita") {
-        return quotesHandler(chat);
-    }
-    else if (text === "/citastats") {
-        return quoteStats(chat);
-    }
-    else if (text.startsWith("/cita")) {
-        return quotesHandler(chat, text.substring(6));
-    }
-    else if (text == "/all") {
-        return pingAll(chat.id)
-    }
-    else if (text.startsWith("/all")) {
-        return pingAll(chat.id, text.substring(5))
-    }
+type CommandHandler = (chat: Chat, params?: string) => Promise<unknown>;
+
+const commandHandlers: Record<string, CommandHandler> = {
+    "echo": echo,
+    "ciccio": ciccio,
+    "all": pingAll,
+    "citastats": quoteStats,
+    "cita": quotesHandler
+};
+
+async function unknownHandler() {
+    // we could return a message to the user that the command is invalid, but ignoring it is probably even better.
 }
 
-async function pingAll(chatId: string, extra: string = "") {
-    const users = model.params.all_users.split(",").map(u => `@${u}`).join(" ")
-    if (extra) {
-        return sendTextToUser(model.params.bot_token, chatId, `${users} ${extra}`);
+export async function parseAndHandleRequest(chat: Chat, initialText: string) {
+    // remove initial slash and in case the bot tag
+    const text = initialText.replace("@immortacci_bot", "").substring(1);
+    const [prefix, ...params] = text.split(" ");
+    const handler = commandHandlers[prefix] ?? unknownHandler;
+    return handler(chat, params?.join(" "));
+}
+
+async function ciccio(chat: Chat) {
+    return sendTextToUser(model.params.bot_token, chat.id, "culo");
+}
+
+async function echo(chat: Chat, params?: string) {
+    return sendTextToUser(model.params.bot_token, chat.id, params ?? "whassaaappp");
+}
+
+async function pingAll(chat: Chat, params?: string) {
+    const chatId = chat.id;
+    const users = model.params.all_users.split(",").map(u => `@${u}`).join(" ");
+    if (params) {
+        return sendTextToUser(model.params.bot_token, chatId, `${users} ${params}`);
     }
     return sendTextToUser(model.params.bot_token, chatId, `${users} adunataaaa`);
 }

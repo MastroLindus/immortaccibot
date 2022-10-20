@@ -1,7 +1,6 @@
 import quotesJson from "../resources/quotes.json" assert { type: 'json' };
 import { model } from "./handler.js";
-import { sendTextToUser } from "./sendTextToUser.js";
-import { Chat } from "./TelegramTypes.js";
+import { sendTextToUser, Chat } from "./telegramApi.js";
 
 type Quote = typeof quotesJson[number];
 

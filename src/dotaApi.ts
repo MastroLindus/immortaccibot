@@ -38,14 +38,14 @@ function prettyPrint(match: RecentMatch) {
 
 
 async function getRecentMatches(player: string) {
-    const accountsAsEntries = model.params.dota_accounts.split(",").map(a => {
+    const accountsAsEntries = model.params.dota_accounts.toLowerCase().split(",").map(a => {
         const splitted = a.split("=");
         return [splitted[0], splitted[1]] as [string, string];
     });
 
     const accounts = new Map<string, string>(accountsAsEntries);
 
-    const account = accounts.get(player.replace("@", ""));
+    const account = accounts.get(player.toLowerCase().replace("@", ""));
 
     if (!account) {
         return;

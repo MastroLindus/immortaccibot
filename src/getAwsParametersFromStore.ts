@@ -12,10 +12,6 @@ const defaultParams = parameters.reduce((result, current) => {
 }, {} as Record<ParameterNames, string>)
 
 export async function getAwsParametersFromStore(): Promise<Record<ParameterNames, string>> {
-    if (process.env.IS_OFFLINE) {
-        return offlineParameters;
-    }
-
     const params = {
         Names: [...parameters],
         WithDecryption: true
@@ -27,6 +23,5 @@ export async function getAwsParametersFromStore(): Promise<Record<ParameterNames
 
 }
 
-const offlineParameters = { "all_users": "gino,pilotino", "bot_token": "5726078934:AAEVOhqhQOAAdPMbFsiQFBSCNnTgOZm7vuo", "dota_accounts": "sir_ij=99265187,Stefano_28=8301649,gfrr89=12991488" }
 
 

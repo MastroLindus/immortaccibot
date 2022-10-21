@@ -1,4 +1,4 @@
-import { lastMatchHandler } from "./dotaApi.js";
+import { lastMatchHandler, wlHandler } from "./dotaApi.js";
 import { model } from "./handler.js"
 import { quotesHandler, quoteStats } from "./quotesHandler.js"
 import { sendTextToUser, Chat } from "./telegramApi.js"
@@ -11,7 +11,8 @@ const commandHandlers: Record<string, CommandHandler> = {
     "all": pingAll,
     "citastats": quoteStats,
     "cita": quotesHandler,
-    "dotaLast": lastMatchHandler
+    "dotaLast": lastMatchHandler,
+    "dotaWl": wlHandler
 };
 
 async function unknownHandler() {

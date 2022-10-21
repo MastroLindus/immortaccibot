@@ -1,4 +1,5 @@
 import { model } from "./handler.js"
+import heroJson from "../resources/dotaHeroes.json" assert { type: 'json' };
 import fetch from "node-fetch";
 import { Chat, sendTextToUser } from "./telegramApi.js";
 
@@ -17,22 +18,24 @@ type RecentMatch = {
     last_hits: number;
 }
 
+type DotaHero = typeof heroJson[number];
+
 function prettyPrint(match: RecentMatch) {
     const side = match.player_slot < 128 ? "radiant" : "dire";
     const result = (side == "radiant" && match.radiant_win) || (side == "dire" && !match.radiant_win) ? "won" : "lost";
 
     const { kills, deaths, assists, xp_per_min, gold_per_min, hero_damage, tower_damage, last_hits } = match;
-
-    const playerStats = `
-    kills: ${kills} deaths: ${deaths} assists: ${assists}
-    xp_per_min: ${xp_per_min} gold_per_min: ${gold_per_min} last_hits: ${last_hits}
-    hero_damage: ${hero_damage} tower_damage: ${tower_damage}`;
+    const hero = heroJson.find(h => h.id == match.hero_id);
+    const playerStats = ``;
 
     return `Last match:
-    Side: ${side}
-    Result: ${result}
-    Player stats:
-    ${playerStats}
+        Hero: ${hero?.localized_name}
+        Side: ${side}
+        Result: ${result}
+        Player stats:
+            kills: ${kills} deaths: ${deaths} assists: ${assists}
+            xp_per_min: ${xp_per_min} gold_per_min: ${gold_per_min} last_hits: ${last_hits}
+            hero_damage: ${hero_damage} tower_damage: ${tower_damage}
     `;
 }
 

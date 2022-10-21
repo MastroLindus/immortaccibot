@@ -1,3 +1,4 @@
+import { lastMatchHandler } from "./dotaApi.js";
 import { model } from "./handler.js"
 import { quotesHandler, quoteStats } from "./quotesHandler.js"
 import { sendTextToUser, Chat } from "./telegramApi.js"
@@ -9,7 +10,8 @@ const commandHandlers: Record<string, CommandHandler> = {
     "ciccio": ciccio,
     "all": pingAll,
     "citastats": quoteStats,
-    "cita": quotesHandler
+    "cita": quotesHandler,
+    "dotaLast": lastMatchHandler
 };
 
 async function unknownHandler() {
@@ -25,19 +27,18 @@ export async function parseAndHandleRequest(chat: Chat, initialText: string) {
 }
 
 async function ciccio(chat: Chat) {
-    return sendTextToUser(model.params.bot_token, chat.id, "culo");
+    return sendTextToUser(chat, "culo");
 }
 
 async function echo(chat: Chat, params?: string) {
-    return sendTextToUser(model.params.bot_token, chat.id, params ?? "whassaaappp");
+    return sendTextToUser(chat, params ?? "Whassaaapp?");
 }
 
 async function pingAll(chat: Chat, params?: string) {
-    const chatId = chat.id;
     const users = model.params.all_users.split(",").map(u => `@${u}`).join(" ");
     if (params) {
-        return sendTextToUser(model.params.bot_token, chatId, `${users} ${params}`);
+        return sendTextToUser(chat, `${users} ${params}`);
     }
-    return sendTextToUser(model.params.bot_token, chatId, `${users} adunataaaa`);
+    return sendTextToUser(chat, `${users} adunataaaa`);
 }
 

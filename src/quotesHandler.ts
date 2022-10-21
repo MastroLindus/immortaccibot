@@ -21,17 +21,17 @@ export function quoteStats(chat: Chat) {
     const sortedSums = Object.entries(sums).sort(([, a], [, b]) => b - a).filter(([, a]) => a >= 10);
     const stats = sortedSums.map(([author, value]) => `${author}: ${value}`).join("\n");
 
-    return sendTextToUser(model.params.bot_token, chat.id, `Authors stats (with at least 10 quotes):\n${stats}`);
+    return sendTextToUser(chat, `Authors stats (with at least 10 quotes):\n${stats}`);
 }
 
 export function quotesHandler(chat: Chat, author?: string) {
     if (!author) {
-        return sendTextToUser(model.params.bot_token, chat.id, quoteToString(pickRandomQuote(quotesJson)));
+        return sendTextToUser(chat, quoteToString(pickRandomQuote(quotesJson)));
     }
 
     const authorQuotes = quotesJson.filter(q => q.author.toLowerCase() === author.toLowerCase());
     if (authorQuotes.length > 0) {
-        return sendTextToUser(model.params.bot_token, chat.id, quoteToString(pickRandomQuote(authorQuotes)));
+        return sendTextToUser(chat, quoteToString(pickRandomQuote(authorQuotes)));
     }
-    return sendTextToUser(model.params.bot_token, chat.id, `No quotes found for ${author}`);
+    return sendTextToUser(chat, `No quotes found for ${author}`);
 }

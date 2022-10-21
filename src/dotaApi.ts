@@ -59,6 +59,6 @@ export async function lastMatchHandler(chat: Chat, params?: string) {
     const data = await getRecentMatches(params!);
     if (data) {
         const matchInfo = prettyPrint(data[0]);
-        sendTextToUser(chat, matchInfo);
+        return sendTextToUser(chat, matchInfo);
     }
 }

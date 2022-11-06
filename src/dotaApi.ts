@@ -42,20 +42,20 @@ function prettyPrint(match: Match) {
     const durationSec = match.duration - durationMin * 60;
 
     return `Match ${match.match_id} ${new Date(match.start_time * 1000)}:
-    Duration: ${durationMin}:${durationSec}
-        
-    Radiant:
-    Score: ${match.radiant_score}
-    Won: ${match.radiant_win}
-    Players: 
-    ${rPlayersPrinted}
-        
-    Dire:
-    Score: ${match.dire_score}
-    Won: ${!match.radiant_win}
-    Players: 
-    ${dPlayersPrinted}
-    `;
+Duration: ${durationMin}:${durationSec}
+    
+Radiant:
+Score: ${match.radiant_score}
+Won: ${match.radiant_win}
+Players: 
+${rPlayersPrinted}
+    
+Dire:
+Score: ${match.dire_score}
+Won: ${!match.radiant_win}
+Players: 
+${dPlayersPrinted}
+`;
 }
 
 function prettyPrintWl(wl: WinLose) {

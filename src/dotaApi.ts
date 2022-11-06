@@ -25,22 +25,36 @@ type WinLose = {
 
 type DotaHero = typeof heroJson[number];
 
-function prettyPrint(match: RecentMatch) {
-    const side = match.player_slot < 128 ? "radiant" : "dire";
-    const result = (side == "radiant" && match.radiant_win) || (side == "dire" && !match.radiant_win) ? "won" : "lost";
+function prettyPrintMatchPlayerInfo(player: MatchPlayerInfo) {
+    const hero = heroJson.find(h => h.id == player.hero_id);
+    const { kills, deaths, assists, net_worth } = player;
+    const kda = `${kills}/${deaths}/${assists}`;
+    return `${hero?.localized_name} (${player.personaname ?? "Unknown"}) - kda: ${kda} NW ${net_worth}`;
+}
 
-    const { kills, deaths, assists, xp_per_min, gold_per_min, hero_damage, tower_damage, last_hits } = match;
-    const hero = heroJson.find(h => h.id == match.hero_id);
-    const playerStats = ``;
+function prettyPrint(match: Match) {
+    const radiantPlayers = match.players.filter(p => p.player_slot < 128);
+    const direPlayers = match.players.filter(p => p.player_slot >= 128);
 
-    return `Last match:
-        Hero: ${hero?.localized_name}
-        Side: ${side}
-        Result: ${result}
-        Player stats:
-            kills: ${kills} deaths: ${deaths} assists: ${assists}
-            xp_per_min: ${xp_per_min} gold_per_min: ${gold_per_min} last_hits: ${last_hits}
-            hero_damage: ${hero_damage} tower_damage: ${tower_damage}
+    const rPlayersPrinted = radiantPlayers.map(prettyPrintMatchPlayerInfo).join("\n");
+    const dPlayersPrinted = direPlayers.map(prettyPrintMatchPlayerInfo).join("\n");
+    const durationMin = Math.floor(match.duration / 60);
+    const durationSec = match.duration - durationMin * 60;
+
+    return `Match ${match.match_id} ${new Date(match.start_time * 1000)}:
+        Duration: ${durationMin}:${durationSec}
+        
+        Radiant:
+            Score: ${match.radiant_score}
+            Won: ${match.radiant_win}
+            Players: 
+                ${rPlayersPrinted}
+        
+        Dire:
+            Score: ${match.dire_score}
+            Won: ${!match.radiant_win}
+            Players: 
+                ${dPlayersPrinted}
     `;
 }
 
@@ -84,12 +98,20 @@ async function getWl(player: string, limit?: number) {
     return await reponse.json() as WinLose;
 }
 
+async function getMatch(matchId: number) {
+    const response = await fetch(`https://api.opendota.com/api/matches/${matchId}`);
+    return await response.json() as Match;
+}
+
 
 export async function lastMatchHandler(chat: Chat, params?: string) {
     const data = await getRecentMatches(params!);
     if (data) {
-        const matchInfo = prettyPrint(data[0]);
-        return sendTextToUser(chat, matchInfo);
+        const matchInfo = await getMatch(data[0].match_id);
+        if (matchInfo) {
+            return sendTextToUser(chat, prettyPrint(matchInfo));
+        }
+        return sendTextToUser(chat, "match not found");
     }
 }
 
@@ -103,3 +125,37 @@ export async function wlHandler(chat: Chat, params?: string) {
         }
     }
 }
+
+type Match = {
+    match_id: number,
+    dire_score: number,
+    duration: number,
+    human_players: number,
+    match_seq_num: number,
+    radiant_score: number,
+    radiant_win: boolean,
+    start_time: number,
+    players: ReadonlyArray<MatchPlayerInfo>
+};
+
+type MatchPlayerInfo = {
+    match_id: number,
+    player_slot: number,
+    account_id: number,
+    assists: number,
+    deaths: number,
+    denies: number,
+    gold_per_min: number,
+    hero_damage: number,
+    hero_healing: number,
+    hero_id: number,
+    kills: number,
+    last_hits: number,
+    level: number,
+    net_worth: number,
+    xp_per_min: number,
+    personaname: string,
+    tower_damage: number,
+    win: number,
+    lose: number
+};

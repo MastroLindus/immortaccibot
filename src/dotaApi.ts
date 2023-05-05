@@ -160,7 +160,7 @@ export async function playerHeroesHandler(chat: Chat, params?: string) {
         const heroId = getHeroIdFromName(maybeHero);
         const playersHeroesInfo = await getPlayerHeroes(paramsInfo.user, heroId);
         if (playersHeroesInfo) {
-            return sendTextToUser(chat, prettyPrintPlayerHeroes(playersHeroesInfo));
+            return sendTextToUser(chat, prettyPrintPlayerHeroes(playersHeroesInfo, heroId !== undefined ? 1 : undefined));
         }
     }
 }

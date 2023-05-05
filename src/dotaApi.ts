@@ -32,6 +32,18 @@ function prettyPrintMatchPlayerInfo(player: MatchPlayerInfo) {
     return `${hero?.localized_name} (${player.personaname ?? "Unknown"}) - kda: ${kda} NW ${net_worth}`;
 }
 
+function prettyPrintPlayerHero(heroData: PlayerHero) {
+    const hero = heroJson.find(h => h.id == heroData.hero_id);
+    const { games, win } = heroData;
+    const rate = win == 0 || games == 0 ? 0 : win / (games) * 100;
+    const truncatedRate = Math.trunc(rate * 100) / 100;
+    return `${hero?.localized_name} wins: ${win} games: ${games} w/r ${truncatedRate}`;
+}
+
+function prettyPrintPlayerHeroes(data: ReadonlyArray<PlayerHero>, limit=7) {
+    return data.slice(0, limit).map(prettyPrintPlayerHero).join("\n");
+}
+
 function prettyPrint(match: Match) {
     const radiantPlayers = match.players.filter(p => p.player_slot < 128);
     const direPlayers = match.players.filter(p => p.player_slot >= 128);
@@ -88,6 +100,16 @@ async function getRecentMatches(player: string) {
     return await reponse.json() as ReadonlyArray<RecentMatch>;
 }
 
+async function getPlayerHeroes(player: string, heroId ?: number) {
+    const account = getDotaAccount(player)
+    if (!account) {
+        return;
+    }
+    const heroQuery = heroId && !isNaN(heroId) ? `?hero_id=${heroId}` : "";
+    const reponse = await fetch(`https://api.opendota.com/api/players/${account}/heroes${heroQuery}`);
+    return await reponse.json() as ReadonlyArray<PlayerHero>;
+}
+
 async function getWl(player: string, limit?: number) {
     const account = getDotaAccount(player)
     if (!account) {
@@ -126,6 +148,23 @@ export async function wlHandler(chat: Chat, params?: string) {
     }
 }
 
+function getHeroIdFromName(name: string) {
+    const hero = heroJson.find(h => h.localized_name.toLocaleLowerCase() == name.toLocaleLowerCase())
+    return hero?.id;
+}
+
+export async function playerHeroesHandler(chat: Chat, params?: string) {
+    const paramsInfo = extractUserFromParams(params);
+    if (paramsInfo) {
+        const maybeHero = paramsInfo.params;
+        const heroId = getHeroIdFromName(maybeHero);
+        const playersHeroesInfo = await getPlayerHeroes(paramsInfo.user, heroId);
+        if (playersHeroesInfo) {
+            return sendTextToUser(chat, prettyPrintPlayerHeroes(playersHeroesInfo));
+        }
+    }
+}
+
 type Match = {
     match_id: number,
     dire_score: number,
@@ -158,4 +197,15 @@ type MatchPlayerInfo = {
     tower_damage: number,
     win: number,
     lose: number
+};
+
+type PlayerHero = {
+    hero_id: number,
+    last_played: number,
+    games: number,
+    win: number,
+    with_games: number,
+    with_win: number,
+    against_games: number,
+    against_win: number
 };

@@ -7,6 +7,7 @@
         "outDir": ".build",
         "moduleResolution": "node",
         "module": "ESNext",
+        "skipLibCheck": true,
         "lib": [
             "es2017"
         ],

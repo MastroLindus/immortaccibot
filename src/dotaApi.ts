@@ -2,7 +2,7 @@ import { model } from "./handler.js"
 import heroJson from "../resources/dotaHeroes.json" assert { type: 'json' };
 import fetch from "node-fetch";
 import { Chat, sendTextToUser } from "./telegramApi.js";
-import { extractUserFromParams } from "./utils.js";
+import { extractUserFromParams, timeToCETString } from "./utils.js";
 
 type RecentMatch = {
     match_id: number;
@@ -40,7 +40,7 @@ function prettyPrintPlayerHero(heroData: PlayerHero) {
     return `${hero?.localized_name} wins: ${win} games: ${games} w/r ${truncatedRate}`;
 }
 
-function prettyPrintPlayerHeroes(data: ReadonlyArray<PlayerHero>, limit=7) {
+function prettyPrintPlayerHeroes(data: ReadonlyArray<PlayerHero>, limit = 7) {
     return data.slice(0, limit).map(prettyPrintPlayerHero).join("\n");
 }
 
@@ -53,7 +53,7 @@ function prettyPrint(match: Match) {
     const durationMin = Math.floor(match.duration / 60);
     const durationSec = match.duration - durationMin * 60;
 
-    return `Match ${match.match_id} ${new Date(match.start_time * 1000)}:
+    return `Match ${match.match_id} ${timeToCETString(new Date(match.start_time * 1000))}:
 Duration: ${durationMin}:${durationSec}
     
 Radiant:
@@ -100,7 +100,7 @@ async function getRecentMatches(player: string) {
     return await reponse.json() as ReadonlyArray<RecentMatch>;
 }
 
-async function getPlayerHeroes(player: string, heroId ?: number) {
+async function getPlayerHeroes(player: string, heroId?: number) {
     const account = getDotaAccount(player)
     if (!account) {
         return;

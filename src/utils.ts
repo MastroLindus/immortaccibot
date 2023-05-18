@@ -13,3 +13,7 @@ export function extractUserFromParams(initialParams?: string) {
     }
 
 }
+
+export function timeToCETString(time: Date): string {
+    return time.toLocaleString("it-IT", { timeZone: "Europe/Amsterdam" });
+}

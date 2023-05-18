@@ -1,7 +1,6 @@
 import { model } from "./handler.js"
 import heroJson from "../resources/dotaHeroes.json" assert { type: 'json' };
 import fetch from "node-fetch";
-import { Chat, sendTextToUser } from "./telegramApi.js";
 import { extractUserFromParams, timeToCETString } from "./utils.js";
 
 type RecentMatch = {
@@ -127,24 +126,24 @@ async function getMatch(matchId: number) {
 }
 
 
-export async function lastMatchHandler(chat: Chat, params?: string) {
+export async function lastMatchHandler(params?: string) {
     const data = await getRecentMatches(params!);
     if (data) {
         const matchInfo = await getMatch(data[0].match_id);
         if (matchInfo) {
-            return sendTextToUser(chat, prettyPrint(matchInfo));
+            return prettyPrint(matchInfo);
         }
-        return sendTextToUser(chat, "match not found");
+        return "match not found";
     }
 }
 
-export async function wlHandler(chat: Chat, params?: string) {
+export async function wlHandler(params?: string) {
     const paramsInfo = extractUserFromParams(params);
     if (paramsInfo) {
         const maybeNumber = Number(paramsInfo.params);
         const wlInfo = await getWl(paramsInfo.user, maybeNumber);
         if (wlInfo) {
-            return sendTextToUser(chat, prettyPrintWl(wlInfo));
+            return prettyPrintWl(wlInfo);
         }
     }
 }
@@ -154,14 +153,14 @@ function getHeroIdFromName(name: string) {
     return hero?.id;
 }
 
-export async function playerHeroesHandler(chat: Chat, params?: string) {
+export async function playerHeroesHandler(params?: string) {
     const paramsInfo = extractUserFromParams(params);
     if (paramsInfo) {
         const maybeHero = paramsInfo.params;
         const heroId = getHeroIdFromName(maybeHero);
         const playersHeroesInfo = await getPlayerHeroes(paramsInfo.user, heroId);
         if (playersHeroesInfo) {
-            return sendTextToUser(chat, prettyPrintPlayerHeroes(playersHeroesInfo, heroId !== undefined ? 1 : undefined));
+            return prettyPrintPlayerHeroes(playersHeroesInfo, heroId !== undefined ? 1 : undefined);
         }
     }
 }

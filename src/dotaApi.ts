@@ -53,7 +53,8 @@ function prettyPrint(match: Match) {
     const durationMin = Math.floor(match.duration / 60);
     const durationSec = match.duration - durationMin * 60;
 
-    return `Match ${match.match_id} ${timeToCETString(new Date(match.start_time * 1000))}:
+    return `Match ${match.match_id} 
+Time: ${timeToCETString(new Date(match.start_time * 1000))}
 Duration: ${durationMin}:${durationSec}
     
 Radiant:

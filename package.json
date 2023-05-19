@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node --loader=ts-node/esm bin/test.ts",
     "lint": "eslint ./src/**/*.ts",
-    "prettier": " prettier --check ./src"
+    "prettier": "prettier --check ./src",
+    "offline": "serverless offline --reloadHandler"
   },
   "type": "module",
   "author": "",

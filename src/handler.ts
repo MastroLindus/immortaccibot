@@ -7,10 +7,11 @@ export const model = {
     params: nullParams,
     dotaApi: nullDotaApi,
     _fetched: false,
+    isOffline: process.env.IS_OFFLINE,
 };
 
 async function fetchModelIfNeeded() {
-    if (!model._fetched) {
+    if (!model._fetched && !model.isOffline) {
         model.params = await getAwsParametersFromStore();
         model.dotaApi = dotaApi();
         model._fetched = true;
@@ -31,20 +32,30 @@ type TelegramMessageEvent = {
 export const telegrambot = async (event: TelegramEvent) => {
     await fetchModelIfNeeded();
     const body = JSON.parse(event.body) as TelegramMessageEvent;
+    let returnMessage;
 
     if (body?.message?.text && body?.message?.chat) {
         const { chat, text } = body.message;
-        const returnMessage = await parseAndHandleRequest(text);
+        returnMessage = await parseAndHandleRequest(text);
         if (returnMessage) {
-            const botToken = model.params.bot_token;
-            await sendTextToUser(chat.id, botToken, returnMessage);
+            await sendTextToUser(chat.id, returnMessage);
         }
+    }
+
+    if (model.isOffline) {
+        return returnMessage || "NO RETURN MESSAGE";
     }
 
     return { statusCode: 200 };
 };
 
-async function sendTextToUser(chatId: string, botToken: string, text: string) {
+async function sendTextToUser(chatId: string, text: string) {
+    const botToken = model.params.bot_token;
+
+    if (model.isOffline) {
+        console.log(`Chat ${chatId}: ${text}`);
+        return;
+    }
     return fetch(
         `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(
             text

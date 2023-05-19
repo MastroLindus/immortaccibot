@@ -37,9 +37,10 @@ export const telegrambot = async (event: TelegramEvent) => {
     const { chat, text } = body.message;
     console.log(`I am here ${chat.id} ${text} ${model.params.all_users}`);
     const returnMessage = await parseAndHandleRequest(text);
+    console.log(`return message ${returnMessage}`);
     if (returnMessage) {
       const botToken = model.params.bot_token;
-      sendTextToUser(chat.id, botToken, returnMessage);
+      await sendTextToUser(chat.id, botToken, returnMessage);
     }
   }
 

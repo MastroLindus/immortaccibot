@@ -1,4 +1,4 @@
-import { model } from "./handler";
+import { model } from "./handler.js";
 
 export async function unknownHandler() {
     // we could return a message to the user that the command is invalid, but ignoring it is probably even better.

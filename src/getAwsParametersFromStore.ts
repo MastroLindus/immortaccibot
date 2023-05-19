@@ -6,7 +6,7 @@ const SSM = new AWS.SSM();
 const parameters = ['all_users', 'bot_token', 'dota_accounts'] as const;
 type ParameterNames = typeof parameters[number];
 
-const defaultParams = parameters.reduce((result, current) => {
+export const nullParams = parameters.reduce((result, current) => {
     result[current] = "";
     return result;
 }, {} as Record<ParameterNames, string>)
@@ -19,7 +19,7 @@ export async function getAwsParametersFromStore(): Promise<Record<ParameterNames
     const request = await SSM.getParameters(params).promise();
 
     return request?.Parameters?.reduce<Record<ParameterNames, string>>((result: Record<ParameterNames, string>, k: Parameter) =>
-        ({ ...result, [k.Name!]: k.Value }), defaultParams) ?? defaultParams;
+        ({ ...result, [k.Name!]: k.Value }), nullParams) ?? nullParams;
 
 }
 

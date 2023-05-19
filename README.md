@@ -1,6 +1,12 @@
 # immortaccibot
 
-Telegram bot
+## Telegram bot
+
+Install locally with
+```
+npm install
+```
+Visual studio code is suggested as there's configuration for its extensions.
 
 For running locally run:
 ```

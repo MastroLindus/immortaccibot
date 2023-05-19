@@ -73,11 +73,7 @@ function getDotaAccount(player: string) {
 
     const accounts = new Map<string, string>(accountsAsEntries);
 
-    const account = accounts.get(player.toLowerCase().replace("@", ""));
-    if (!account) {
-        throw new Error("Invalid Dota Account");
-    }
-    return account;
+    return accounts.get(player.toLowerCase().replace("@", ""));
 }
 
 export function dotaApi(baseUrl = "https://api.opendota.com/api"): DotaApi {

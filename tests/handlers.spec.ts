@@ -16,8 +16,6 @@ test.group("echo", () => {
     test("without params", async ({ expect }) => {
         expect(await parseAndHandleRequest("/echo")).toEqual("Whassaaapp?");
     });
-
-    test("CHECK FAIL", ({ expect }) => expect(true).toEqual(false));
 });
 
 test.group("dota", () => {

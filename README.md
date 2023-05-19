@@ -9,11 +9,8 @@ For running tests use node run test or the visual code japa extension
 Todo:
 
 -   better logging
--   avoid committing to master
--   run tests before merging PR
 -   better code split/organization
 -   use node telegram SDK library instead of making manual http calls
--   tweak github actions
--   refactor variable names
+-   tweak github actions if we need to go with pull requests
 -   local development
 -   new features!

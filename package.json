@@ -4,7 +4,9 @@
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "test": "node --loader=ts-node/esm bin/test.ts"
+    "test": "node --loader=ts-node/esm bin/test.ts",
+    "lint": "eslint ./src/**/*.ts",
+    "prettier": " prettier --check ./src"
   },
   "type": "module",
   "author": "",

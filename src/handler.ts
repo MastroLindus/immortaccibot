@@ -1,10 +1,20 @@
+import { dotaApi, nullDotaApi } from "./dota/dotaApi.js";
 import { getAwsParametersFromStore, nullParams } from "./getAwsParametersFromStore.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
 
 export const model = {
   params: nullParams,
+  dotaApi: nullDotaApi,
   _fetched: false
+}
+
+async function fetchModelIfNeeded() {
+  if (!model._fetched) {
+    model.params = await getAwsParametersFromStore();
+    model.dotaApi = dotaApi();
+    model._fetched = true;
+  }
 }
 
 type TelegramEvent = {
@@ -34,13 +44,6 @@ export const telegrambot = async (event: TelegramEvent) => {
 
   return { statusCode: 200 };
 };
-
-async function fetchModelIfNeeded() {
-  if (!model._fetched) {
-    model.params = await getAwsParametersFromStore();
-    model._fetched = true;
-  }
-}
 
 async function sendTextToUser(chatId: string, botToken: string, text: string) {
   return fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(text)}`)

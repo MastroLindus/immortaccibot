@@ -1,4 +1,4 @@
-import { lastMatchHandler, playerHeroesHandler, wlHandler } from "./dotaApi.js";
+import { lastMatchHandler, playerHeroesHandler, wlHandler } from "./dota/dotaHandlers.js";
 import { model } from "./handler.js"
 import { quotesHandler, quoteStats } from "./quotesHandler.js"
 
@@ -24,7 +24,8 @@ export async function parseAndHandleRequest(initialText: string) {
     const text = initialText.replace("@immortacci_bot", "").substring(1);
     const [prefix, ...params] = text.split(" ");
     const handler = commandHandlers[prefix.toLowerCase()] ?? unknownHandler;
-    return handler(params?.join(" "));
+    const paramsString = params.length == 0 ? undefined : params.join(" ");
+    return handler(paramsString);
 }
 
 async function ciccio() {

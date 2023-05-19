@@ -1,4 +1,4 @@
-import { model } from "../handler.js";
+import { model } from "../bot.js";
 import heroJson from "../../resources/dotaHeroes.json" assert { type: "json" };
 import { extractUserFromParams, timeToCETString } from "../utils.js";
 import { Match, MatchPlayerInfo, PlayerHero, WinLose } from "./dotaApi.js";

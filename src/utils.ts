@@ -1,4 +1,4 @@
-import { model } from "./handler.js";
+import { model } from "./bot.js";
 
 export function extractUserFromParams(initialParams?: string) {
     if (!initialParams) {

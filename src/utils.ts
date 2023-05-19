@@ -8,10 +8,8 @@ export function extractUserFromParams(initialParams?: string) {
     const [user, ...rest] = initialParams.split(" ");
     const userLower = user.toLowerCase().replace("@", "");
     if (model.params.all_users.toLowerCase().split(",").includes(userLower)) {
-
         return { user: userLower, params: rest?.join(" ") };
     }
-
 }
 
 export function timeToCETString(time: Date): string {

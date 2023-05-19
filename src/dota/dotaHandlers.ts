@@ -1,21 +1,23 @@
-import { model } from "../handler.js"
-import heroJson from "../../resources/dotaHeroes.json" assert { type: 'json' };
+import { model } from "../handler.js";
+import heroJson from "../../resources/dotaHeroes.json" assert { type: "json" };
 import { extractUserFromParams, timeToCETString } from "../utils.js";
 import { Match, MatchPlayerInfo, PlayerHero, WinLose } from "./dotaApi.js";
 
-type DotaHero = typeof heroJson[number];
+type DotaHero = (typeof heroJson)[number];
 
 function prettyPrintMatchPlayerInfo(player: MatchPlayerInfo) {
-    const hero = heroJson.find(h => h.id == player.hero_id);
+    const hero = heroJson.find((h) => h.id == player.hero_id);
     const { kills, deaths, assists, net_worth } = player;
     const kda = `${kills}/${deaths}/${assists}`;
-    return `${hero?.localized_name} (${player.personaname ?? "Unknown"}) - kda: ${kda} NW ${net_worth}`;
+    return `${hero?.localized_name} (${
+        player.personaname ?? "Unknown"
+    }) - kda: ${kda} NW ${net_worth}`;
 }
 
 function prettyPrintPlayerHero(heroData: PlayerHero) {
-    const hero = heroJson.find(h => h.id == heroData.hero_id);
+    const hero = heroJson.find((h) => h.id == heroData.hero_id);
     const { games, win } = heroData;
-    const rate = win == 0 || games == 0 ? 0 : win / (games) * 100;
+    const rate = win == 0 || games == 0 ? 0 : (win / games) * 100;
     const truncatedRate = Math.trunc(rate * 100) / 100;
     return `${hero?.localized_name} wins: ${win} games: ${games} w/r ${truncatedRate}`;
 }
@@ -25,8 +27,8 @@ function prettyPrintPlayerHeroes(data: ReadonlyArray<PlayerHero>, limit = 7) {
 }
 
 function prettyPrint(match: Match) {
-    const radiantPlayers = match.players.filter(p => p.player_slot < 128);
-    const direPlayers = match.players.filter(p => p.player_slot >= 128);
+    const radiantPlayers = match.players.filter((p) => p.player_slot < 128);
+    const direPlayers = match.players.filter((p) => p.player_slot >= 128);
 
     const rPlayersPrinted = radiantPlayers.map(prettyPrintMatchPlayerInfo).join("\n");
     const dPlayersPrinted = direPlayers.map(prettyPrintMatchPlayerInfo).join("\n");
@@ -52,7 +54,7 @@ ${dPlayersPrinted}
 }
 
 function prettyPrintWl(wl: WinLose) {
-    const rate = wl.win == 0 && wl.lose == 0 ? 0 : wl.win / (wl.win + wl.lose) * 100;
+    const rate = wl.win == 0 && wl.lose == 0 ? 0 : (wl.win / (wl.win + wl.lose)) * 100;
     const truncatedRate = Math.trunc(rate * 100) / 100;
     return `
     Match won: ${wl.win}
@@ -83,7 +85,9 @@ export async function wlHandler(params?: string) {
 }
 
 function getHeroIdFromName(name: string) {
-    const hero = heroJson.find(h => h.localized_name.toLocaleLowerCase() == name.toLocaleLowerCase())
+    const hero = heroJson.find(
+        (h) => h.localized_name.toLocaleLowerCase() == name.toLocaleLowerCase()
+    );
     return hero?.id;
 }
 
@@ -99,4 +103,3 @@ export async function playerHeroesHandler(params?: string) {
         }
     }
 }
-

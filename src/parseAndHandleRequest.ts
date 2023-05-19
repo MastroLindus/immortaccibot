@@ -1,18 +1,18 @@
 import { lastMatchHandler, playerHeroesHandler, wlHandler } from "./dota/dotaHandlers.js";
-import { model } from "./handler.js"
-import { quotesHandler, quoteStats } from "./quotesHandler.js"
+import { model } from "./handler.js";
+import { quotesHandler, quoteStats } from "./quotesHandler.js";
 
 type CommandHandler = (params?: string) => Promise<string | undefined>;
 
 const commandHandlers: Record<string, CommandHandler> = {
-    "echo": echo,
-    "ciccio": ciccio,
-    "all": pingAll,
-    "citastats": quoteStats,
-    "cita": quotesHandler,
-    "dotalast": lastMatchHandler,
-    "dotawl": wlHandler,
-    "heroes": playerHeroesHandler,
+    echo: echo,
+    ciccio: ciccio,
+    all: pingAll,
+    citastats: quoteStats,
+    cita: quotesHandler,
+    dotalast: lastMatchHandler,
+    dotawl: wlHandler,
+    heroes: playerHeroesHandler,
 };
 
 async function unknownHandler() {
@@ -37,10 +37,12 @@ async function echo(params?: string) {
 }
 
 async function pingAll(params?: string) {
-    const users = model.params.all_users.split(",").map(u => `@${u}`).join(" ");
+    const users = model.params.all_users
+        .split(",")
+        .map((u) => `@${u}`)
+        .join(" ");
     if (params) {
         return `${users} ${params}`;
     }
     return `${users} adunataaaa`;
 }
-

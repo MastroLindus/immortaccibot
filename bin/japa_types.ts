@@ -1,11 +1,11 @@
-import '@japa/runner'
+import "@japa/runner";
 
-declare module '@japa/runner' {
-  interface TestContext {
-    // notify TypeScript about custom context properties
-  }
+declare module "@japa/runner" {
+    interface TestContext {
+        // notify TypeScript about custom context properties
+    }
 
-  interface Test<TestData> {
-    // notify TypeScript about custom test properties
-  }
+    interface Test<TestData> {
+        // notify TypeScript about custom test properties
+    }
 }

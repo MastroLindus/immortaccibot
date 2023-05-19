@@ -1,8 +1,8 @@
-import { expect } from '@japa/expect'
-import { pathToFileURL } from 'node:url'
-import { specReporter } from '@japa/spec-reporter'
-import { runFailedTests } from '@japa/run-failed-tests'
-import { processCliArgs, configure, run } from '@japa/runner'
+import { expect } from "@japa/expect";
+import { pathToFileURL } from "node:url";
+import { specReporter } from "@japa/spec-reporter";
+import { runFailedTests } from "@japa/run-failed-tests";
+import { processCliArgs, configure, run } from "@japa/runner";
 
 /*
 |--------------------------------------------------------------------------
@@ -18,14 +18,14 @@ import { processCliArgs, configure, run } from '@japa/runner'
 | Please consult japa.dev/runner-config for the config docs.
 */
 configure({
-  ...processCliArgs(process.argv.slice(2)),
-  ...{
-    files: ['tests/**/*.spec.ts'],
-    plugins: [expect(), runFailedTests()],
-    reporters: [specReporter()],
-    importer: (filePath) => import(pathToFileURL(filePath).href),
-  },
-})
+    ...processCliArgs(process.argv.slice(2)),
+    ...{
+        files: ["tests/**/*.spec.ts"],
+        plugins: [expect(), runFailedTests()],
+        reporters: [specReporter()],
+        importer: (filePath) => import(pathToFileURL(filePath).href),
+    },
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +35,4 @@ configure({
 | The following "run" method is required to execute all the tests.
 |
 */
-run()
+run();

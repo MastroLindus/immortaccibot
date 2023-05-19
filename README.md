@@ -8,7 +8,6 @@ For running tests use node run test or the visual code japa extension
 
 Todo:
 - better logging
-- upgrade aws sdk
 - avoid committing to master
 - run tests before merging PR
 - linting/formatting

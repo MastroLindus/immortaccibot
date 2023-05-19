@@ -1,7 +1,6 @@
-import AWS from "aws-sdk";
-import { Parameter } from "aws-sdk/clients/ssm";
+import { SSMClient, GetParametersCommand, Parameter } from "@aws-sdk/client-ssm";
 
-const SSM = new AWS.SSM();
+const client = new SSMClient({ region: "eu-west-1" });
 
 const parameters = ['all_users', 'bot_token', 'dota_accounts'] as const;
 type ParameterNames = typeof parameters[number];
@@ -16,9 +15,10 @@ export async function getAwsParametersFromStore(): Promise<Record<ParameterNames
         Names: [...parameters],
         WithDecryption: true
     };
-    const request = await SSM.getParameters(params).promise();
+    const command = new GetParametersCommand(params);
+    const response = await client.send(command);
 
-    return request?.Parameters?.reduce<Record<ParameterNames, string>>((result: Record<ParameterNames, string>, k: Parameter) =>
+    return response?.Parameters?.reduce<Record<ParameterNames, string>>((result: Record<ParameterNames, string>, k: Parameter) =>
         ({ ...result, [k.Name!]: k.Value }), nullParams) ?? nullParams;
 
 }

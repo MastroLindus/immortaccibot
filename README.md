@@ -9,7 +9,10 @@ npm run offline
 And send requests like:
 ```
 ./offline-invoke /echo test
+./offline-invoke /dotaWl gino
 ```
+Gino is a real user :P
+
 For running tests use 
 ```
 npm test

@@ -11,7 +11,7 @@ export const model = {
 };
 
 async function fetchModelIfNeeded() {
-    if (!model._fetched && !model.isOffline) {
+    if (!model._fetched) {
         model.params = await getAwsParametersFromStore();
         model.dotaApi = dotaApi();
         model._fetched = true;

@@ -1,4 +1,5 @@
 import { SSMClient, GetParametersCommand, Parameter } from "@aws-sdk/client-ssm";
+import { model } from "./bot.js";
 
 const client = new SSMClient({ region: "eu-west-1" });
 
@@ -10,7 +11,17 @@ export const nullParams = parameters.reduce((result, current) => {
     return result;
 }, {} as Record<ParameterNames, string>);
 
+const offlineParams = {
+    all_users: "gino,ciccio",
+    bot_token: "",
+    dota_accounts: "gino=171028175",
+};
+
 export async function getAwsParametersFromStore(): Promise<Record<ParameterNames, string>> {
+    if (model.isOffline) {
+        return offlineParams;
+    }
+
     const params = {
         Names: [...parameters],
         WithDecryption: true,

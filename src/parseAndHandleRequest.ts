@@ -5,6 +5,7 @@ import { quotesHandler, quoteStats } from "./quotesHandler.js";
 
 type CommandHandler = (params?: string) => Promise<string | undefined>;
 
+// keys in LOWER CASE
 const commandHandlers: Record<string, CommandHandler> = {
     echo: echo,
     ciccio: ciccio,
@@ -14,7 +15,7 @@ const commandHandlers: Record<string, CommandHandler> = {
     dotalast: lastMatchHandler,
     dotawl: wlHandler,
     heroes: playerHeroesHandler,
-    listTables: listTables,
+    listtables: listTables,
 };
 
 export async function parseAndHandleRequest(initialText: string) {
@@ -22,8 +23,6 @@ export async function parseAndHandleRequest(initialText: string) {
     const text = initialText.replace("@immortacci_bot", "").substring(1);
     const [prefix, ...params] = text.split(" ");
     const handler = commandHandlers[prefix.toLowerCase()] ?? unknownHandler;
-    console.log(`prefix ${prefix}`);
-    console.log(handler);
     const paramsString = params.length == 0 ? undefined : params.join(" ");
     return handler(paramsString);
 }

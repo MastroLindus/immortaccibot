@@ -46,15 +46,17 @@ async function fetchModelIfNeeded() {
 }
 
 async function sendTextToUser(chatId: string, text: string) {
-    const botToken = model.params.bot_token;
-
     if (model.isOffline) {
         console.log(`Chat ${chatId}: ${text}`);
         return;
     }
-    return fetch(
-        `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(
-            text
-        )}`
-    );
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    if (botToken) {
+        return fetch(
+            `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(
+                text
+            )}`
+        );
+    }
+    console.log("bot token not found in env variable");
 }

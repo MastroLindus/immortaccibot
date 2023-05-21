@@ -6,7 +6,7 @@ export const options = {
     },
 };
 
-export const parameters = ["all_users", "bot_token", "dota_accounts"] as const;
+export const parameters = ["all_users", "dota_accounts"] as const;
 export type ParameterNames = (typeof parameters)[number];
 
 export const nullParams = parameters.reduce((result, current) => {
@@ -16,7 +16,6 @@ export const nullParams = parameters.reduce((result, current) => {
 
 export const offlineParams = {
     all_users: "gino,ciccio",
-    bot_token: "",
     dota_accounts: "gino=171028175",
 };
 

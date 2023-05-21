@@ -1,3 +1,4 @@
+import { debug } from "./logging.js";
 import { isOffline } from "./model.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
@@ -15,6 +16,7 @@ type TelegramMessageEvent = {
 
 export const telegrambot = async (event: TelegramEvent) => {
     const body = JSON.parse(event.body) as TelegramMessageEvent;
+    debug("Received request from telegram: ", body);
     let returnMessage;
 
     if (body?.message?.text && body?.message?.chat) {

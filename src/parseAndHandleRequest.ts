@@ -15,7 +15,6 @@ const commandHandlers: Record<string, CommandHandler> = {
     dotalast: lastMatchHandler,
     dotawl: wlHandler,
     heroes: playerHeroesHandler,
-    getusers: async () => (await getUsersFromAws()).join(","),
 };
 
 export async function parseAndHandleRequest(initialText: string) {

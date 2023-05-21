@@ -1,28 +1,8 @@
-import { dotaApi, nullDotaApi } from "./dota/dotaApi.js";
-import { getParameters, nullParams } from "./getParameters.js";
+import { getAwsParametersFromStore } from "./aws/parameterStore.js";
+import { dotaApi } from "./dota/dotaApi.js";
+import { model, nullParams, offlineParams, parameters } from "./model.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
-
-export const model = {
-    params: nullParams,
-    dotaApi: nullDotaApi,
-    _fetched: false,
-    isOffline: process.env.IS_OFFLINE,
-};
-
-export const options = {
-    aws: {
-        region: "eu-west-1",
-    },
-};
-
-async function fetchModelIfNeeded() {
-    if (!model._fetched) {
-        model.params = await getParameters();
-        model.dotaApi = dotaApi();
-        model._fetched = true;
-    }
-}
 
 type TelegramEvent = {
     body: string;
@@ -54,6 +34,16 @@ export const telegrambot = async (event: TelegramEvent) => {
 
     return { statusCode: 200 };
 };
+
+async function fetchModelIfNeeded() {
+    if (!model._fetched) {
+        model.params = model.isOffline
+            ? offlineParams
+            : (await getAwsParametersFromStore(parameters)) ?? nullParams;
+        model.dotaApi = dotaApi();
+        model._fetched = true;
+    }
+}
 
 async function sendTextToUser(chatId: string, text: string) {
     const botToken = model.params.bot_token;

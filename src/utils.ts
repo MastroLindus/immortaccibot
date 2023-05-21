@@ -1,4 +1,4 @@
-import { model } from "./bot.js";
+import { model } from "./model.js";
 
 export function extractUserFromParams(initialParams?: string) {
     if (!initialParams) {

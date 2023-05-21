@@ -1,6 +1,6 @@
 import { test } from "@japa/runner";
 import { parseAndHandleRequest } from "../src/parseAndHandleRequest.js";
-import { model } from "../src/bot.js";
+import { model } from "../src/model.js";
 
 test.group("ciccio", () => {
     test("culo", async ({ expect }) => {

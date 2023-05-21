@@ -1,5 +1,5 @@
 import { SSMClient, GetParametersCommand, Parameter } from "@aws-sdk/client-ssm";
-import { options } from "../bot.js";
+import { options } from "../model.js";
 
 const client = new SSMClient({ region: options.aws.region });
 

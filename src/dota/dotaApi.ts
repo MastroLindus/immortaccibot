@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { model } from "../bot.js";
+import { model } from "../model.js";
 
 export type RecentMatch = {
     match_id: number;

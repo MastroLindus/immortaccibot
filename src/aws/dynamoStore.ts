@@ -1,5 +1,5 @@
 import { DynamoDBClient, ListTablesCommand } from "@aws-sdk/client-dynamodb";
-import { options } from "../bot.js";
+import { options } from "../model.js";
 
 const client = new DynamoDBClient({ region: options.aws.region });
 

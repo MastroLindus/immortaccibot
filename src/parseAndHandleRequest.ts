@@ -22,6 +22,8 @@ export async function parseAndHandleRequest(initialText: string) {
     const text = initialText.replace("@immortacci_bot", "").substring(1);
     const [prefix, ...params] = text.split(" ");
     const handler = commandHandlers[prefix.toLowerCase()] ?? unknownHandler;
+    console.log(`prefix ${prefix}`);
+    console.log(handler);
     const paramsString = params.length == 0 ? undefined : params.join(" ");
     return handler(paramsString);
 }

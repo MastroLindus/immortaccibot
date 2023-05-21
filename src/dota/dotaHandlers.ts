@@ -62,13 +62,16 @@ function prettyPrintWl(wl: WinLose) {
 }
 
 export async function lastMatchHandler(params?: string) {
-    const data = await dotaApi.getRecentMatches(params!);
-    if (data) {
-        const matchInfo = await dotaApi.getMatch(data[0].match_id);
-        if (matchInfo) {
-            return prettyPrint(matchInfo);
+    const userInfo = await extractUserFromParams(params);
+    if (userInfo) {
+        const data = await dotaApi.getRecentMatches(userInfo.user);
+        if (data) {
+            const matchInfo = await dotaApi.getMatch(data[0].match_id);
+            if (matchInfo) {
+                return prettyPrint(matchInfo);
+            }
+            return "match not found";
         }
-        return "match not found";
     }
 }
 

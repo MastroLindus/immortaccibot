@@ -6,14 +6,16 @@ export async function extractUserFromParams(initialParams?: string) {
     }
 
     const [user, ...rest] = initialParams.split(" ");
-    const userLower = user.toLowerCase().replace("@", "");
-    const users = await getUsers();
-    const foundUser = users.find(
-        (u) => u.user_id.toLowerCase() == userLower || u.alias.has(userLower)
-    );
+    const foundUser = await getUserByIdOrAlias(user.replace("@", ""));
     if (foundUser) {
-        return { user: userLower, params: rest?.join(" ") };
+        return { user: foundUser, params: rest?.join(" ") };
     }
+}
+
+async function getUserByIdOrAlias(idOrAlias: string) {
+    const users = await getUsers();
+    const lowerQuery = idOrAlias.toLowerCase();
+    return users.find((u) => u.user_id.toLowerCase() == lowerQuery || u.alias.has(lowerQuery));
 }
 
 export function timeToCETString(time: Date): string {

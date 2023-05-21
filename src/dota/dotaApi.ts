@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { getUsers } from "../model.js";
+import { User, getUsers } from "../model.js";
 
 const baseUrl = "https://api.opendota.com/api";
 
@@ -68,17 +68,11 @@ export type PlayerHero = {
     against_win: number;
 };
 
-async function getDotaAccount(player: string) {
-    const users = await getUsers();
-    return users.find((u) => u.user_id.toLowerCase() == player.toLowerCase())?.dota_account;
-}
-
-async function getPlayerResponse<R>(url: string, player: string) {
-    const account = await getDotaAccount(player);
-    if (!account) {
+async function getPlayerResponse<R>(url: string, user: User) {
+    if (!user.dota_account) {
         return;
     }
-    return getResponse<R>(`players/${account}/${url}`);
+    return getResponse<R>(`players/${user.dota_account}/${url}`);
 }
 
 async function getResponse<R>(url: string) {
@@ -89,15 +83,15 @@ async function getResponse<R>(url: string) {
 }
 
 export const dotaApi = {
-    getRecentMatches: async (player: string) =>
-        getPlayerResponse<ReadonlyArray<RecentMatch>>("recentMatches", player),
-    getPlayerHeroes: async (player: string, heroId?: number) => {
+    getRecentMatches: async (user: User) =>
+        getPlayerResponse<ReadonlyArray<RecentMatch>>("recentMatches", user),
+    getPlayerHeroes: async (user: User, heroId?: number) => {
         const heroQuery = heroId && !isNaN(heroId) ? `?hero_id=${heroId}` : "";
-        return getPlayerResponse<ReadonlyArray<PlayerHero>>(`heroes${heroQuery}`, player);
+        return getPlayerResponse<ReadonlyArray<PlayerHero>>(`heroes${heroQuery}`, user);
     },
-    getWl: async (player: string, limit?: number) => {
+    getWl: async (user: User, limit?: number) => {
         const limitQuery = limit && Number.isInteger(limit) ? `?limit=${limit}` : "";
-        return getPlayerResponse<WinLose>(`wl${limitQuery}`, player);
+        return getPlayerResponse<WinLose>(`wl${limitQuery}`, user);
     },
     getMatch: async (matchId: number) => getResponse<Match>(`matches/${matchId}`),
 };

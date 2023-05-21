@@ -23,7 +23,7 @@ const dynamo = new DynamoDB({ region: settings.aws.region });
 function mapResultToUser(item: Record<string, AttributeValue>) {
     const user: User = {
         user_id: item["user_id"].S!,
-        dota_account: item["dota_account"].N ? parseInt(item["dota_account"].N!, 10) : undefined,
+        dota_account: item["dota_account"] ? parseInt(item["dota_account"].N!, 10) : undefined,
         alias: new Set(item["alias"].SS ?? []),
         notifications_enabled: item["notifications_enabled"].S!,
     };

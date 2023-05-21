@@ -1,6 +1,9 @@
 import { test } from "@japa/runner";
 import { parseAndHandleRequest } from "../src/parseAndHandleRequest.js";
-import { model } from "../src/model.js";
+import { dotaApi } from "../src/dota/dotaApi.js";
+import { getUsers } from "../src/model.js";
+
+getUsers(true);
 
 test.group("ciccio", () => {
     test("culo", async ({ expect }) => {
@@ -19,8 +22,8 @@ test.group("echo", () => {
 });
 
 test.group("dota", () => {
-    model.dotaApi.getWl = async (player: string, limit?: number) => ({ win: 5, lose: 3 });
-    model.params.all_users = "gino";
+    // TODO better mocking instead of patching global object
+    dotaApi.getWl = async (player: string, limit?: number) => ({ win: 5, lose: 3 });
 
     test("win-lose", async ({ expect }) => {
         expect(await parseAndHandleRequest("/dotaWl gino")).toEqual(

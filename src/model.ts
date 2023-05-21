@@ -1,4 +1,25 @@
-import { nullDotaApi } from "./dota/dotaApi.js";
+import { getUsersFromAws } from "./aws/dynamoStore.js";
+
+export type User = {
+    user_id: string;
+    dota_account?: number;
+    alias: Set<string>;
+    notifications_enabled: string;
+};
+
+export const isOffline = !!process.env.IS_OFFLINE;
+
+let userCache: ReadonlyArray<User> = [];
+export async function getUsers(useOfflineUsers = isOffline) {
+    if (userCache.length == 0) {
+        if (useOfflineUsers) {
+            userCache = offlineUsers;
+        } else {
+            userCache = await getUsersFromAws();
+        }
+    }
+    return userCache;
+}
 
 export const options = {
     aws: {
@@ -6,22 +27,7 @@ export const options = {
     },
 };
 
-export const parameters = ["all_users", "dota_accounts"] as const;
-export type ParameterNames = (typeof parameters)[number];
-
-export const nullParams = parameters.reduce((result, current) => {
-    result[current] = "";
-    return result;
-}, {} as Record<ParameterNames, string>);
-
-export const offlineParams = {
-    all_users: "gino,ciccio",
-    dota_accounts: "gino=171028175",
-};
-
-export const model = {
-    params: nullParams,
-    dotaApi: nullDotaApi,
-    _fetched: false,
-    isOffline: process.env.IS_OFFLINE,
-};
+const offlineUsers: ReadonlyArray<User> = [
+    { user_id: "gino", dota_account: 171028175, alias: new Set(), notifications_enabled: "true" },
+    { user_id: "ciccio", alias: new Set("dario"), notifications_enabled: "false" },
+];

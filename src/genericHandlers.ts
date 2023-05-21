@@ -1,4 +1,4 @@
-import { model } from "./model.js";
+import { getUsers } from "./model.js";
 
 export async function unknownHandler() {
     // we could return a message to the user that the command is invalid, but ignoring it is probably even better.
@@ -13,12 +13,13 @@ export async function echo(params?: string) {
 }
 
 export async function pingAll(params?: string) {
-    const users = model.params.all_users
-        .split(",")
-        .map((u) => `@${u}`)
+    const users = await getUsers();
+    const userIds = users
+        .filter((u) => u.notifications_enabled != "false")
+        .map((u) => `@${u.user_id}`)
         .join(" ");
     if (params) {
-        return `${users} ${params}`;
+        return `${userIds} ${params}`;
     }
-    return `${users} adunataaaa`;
+    return `${userIds} adunataaaa`;
 }

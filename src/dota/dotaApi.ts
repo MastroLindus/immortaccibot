@@ -1,5 +1,7 @@
 import fetch from "node-fetch";
-import { model } from "../model.js";
+import { getUsers } from "../model.js";
+
+const baseUrl = "https://api.opendota.com/api";
 
 export type RecentMatch = {
     match_id: number;
@@ -66,64 +68,36 @@ export type PlayerHero = {
     against_win: number;
 };
 
-function getDotaAccount(player: string) {
-    const accountsAsEntries = model.params.dota_accounts
-        .toLowerCase()
-        .split(",")
-        .map((a) => {
-            const splitted = a.split("=");
-            return [splitted[0], splitted[1]] as [string, string];
-        });
-
-    const accounts = new Map<string, string>(accountsAsEntries);
-
-    return accounts.get(player.toLowerCase().replace("@", ""));
+async function getDotaAccount(player: string) {
+    const users = await getUsers();
+    return users.find((u) => u.user_id.toLowerCase() == player.toLowerCase())?.dota_account;
 }
 
-export function dotaApi(baseUrl = "https://api.opendota.com/api"): DotaApi {
-    async function getPlayerResponse<R>(url: string, player: string) {
-        const account = getDotaAccount(player);
-        if (!account) {
-            return;
-        }
-        return getResponse<R>(`players/${account}/${url}`);
+async function getPlayerResponse<R>(url: string, player: string) {
+    const account = await getDotaAccount(player);
+    if (!account) {
+        return;
     }
-
-    async function getResponse<R>(url: string) {
-        const response = await fetch(`${baseUrl}/${url}`);
-        if (response) {
-            return response.json() as R;
-        }
-    }
-
-    return {
-        getRecentMatches: async (player: string) =>
-            getPlayerResponse<ReadonlyArray<RecentMatch>>("recentMatches", player),
-        getPlayerHeroes: async (player: string, heroId?: number) => {
-            const heroQuery = heroId && !isNaN(heroId) ? `?hero_id=${heroId}` : "";
-            return getPlayerResponse<ReadonlyArray<PlayerHero>>(`heroes${heroQuery}`, player);
-        },
-        getWl: async (player: string, limit?: number) => {
-            const limitQuery = limit && Number.isInteger(limit) ? `?limit=${limit}` : "";
-            return getPlayerResponse<WinLose>(`wl${limitQuery}`, player);
-        },
-        getMatch: async (matchId: number) => getResponse<Match>(`matches/${matchId}`),
-    };
+    return getResponse<R>(`players/${account}/${url}`);
 }
 
-export type DotaApi = {
-    getRecentMatches: (player: string) => Promise<ReadonlyArray<RecentMatch> | undefined>;
-    getPlayerHeroes: (
-        player: string,
-        heroId?: number
-    ) => Promise<ReadonlyArray<PlayerHero> | undefined>;
-    getWl: (player: string, limit?: number) => Promise<WinLose | undefined>;
-    getMatch: (matchId: number) => Promise<Match | undefined>;
-};
+async function getResponse<R>(url: string) {
+    const response = await fetch(`${baseUrl}/${url}`);
+    if (response) {
+        return response.json() as R;
+    }
+}
 
-export const nullDotaApi: DotaApi = {
-    getRecentMatches: async (player: string) => undefined,
-    getPlayerHeroes: async (player: string, heroId?: number) => undefined,
-    getWl: async (player: string, limit?: number) => undefined,
-    getMatch: async (matchId: number) => undefined,
+export const dotaApi = {
+    getRecentMatches: async (player: string) =>
+        getPlayerResponse<ReadonlyArray<RecentMatch>>("recentMatches", player),
+    getPlayerHeroes: async (player: string, heroId?: number) => {
+        const heroQuery = heroId && !isNaN(heroId) ? `?hero_id=${heroId}` : "";
+        return getPlayerResponse<ReadonlyArray<PlayerHero>>(`heroes${heroQuery}`, player);
+    },
+    getWl: async (player: string, limit?: number) => {
+        const limitQuery = limit && Number.isInteger(limit) ? `?limit=${limit}` : "";
+        return getPlayerResponse<WinLose>(`wl${limitQuery}`, player);
+    },
+    getMatch: async (matchId: number) => getResponse<Match>(`matches/${matchId}`),
 };

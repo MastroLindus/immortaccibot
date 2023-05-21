@@ -1,7 +1,6 @@
-import { model } from "../model.js";
 import heroJson from "../../resources/dotaHeroes.json" assert { type: "json" };
 import { extractUserFromParams, timeToCETString } from "../utils.js";
-import { Match, MatchPlayerInfo, PlayerHero, WinLose } from "./dotaApi.js";
+import { Match, MatchPlayerInfo, PlayerHero, WinLose, dotaApi } from "./dotaApi.js";
 
 type DotaHero = (typeof heroJson)[number];
 
@@ -63,9 +62,9 @@ function prettyPrintWl(wl: WinLose) {
 }
 
 export async function lastMatchHandler(params?: string) {
-    const data = await model.dotaApi.getRecentMatches(params!);
+    const data = await dotaApi.getRecentMatches(params!);
     if (data) {
-        const matchInfo = await model.dotaApi.getMatch(data[0].match_id);
+        const matchInfo = await dotaApi.getMatch(data[0].match_id);
         if (matchInfo) {
             return prettyPrint(matchInfo);
         }
@@ -74,10 +73,10 @@ export async function lastMatchHandler(params?: string) {
 }
 
 export async function wlHandler(params?: string) {
-    const paramsInfo = extractUserFromParams(params);
+    const paramsInfo = await extractUserFromParams(params);
     if (paramsInfo) {
         const maybeNumber = Number(paramsInfo.params);
-        const wlInfo = await model.dotaApi.getWl(paramsInfo.user, maybeNumber);
+        const wlInfo = await dotaApi.getWl(paramsInfo.user, maybeNumber);
         if (wlInfo) {
             return prettyPrintWl(wlInfo);
         }
@@ -92,12 +91,12 @@ function getHeroIdFromName(name: string) {
 }
 
 export async function playerHeroesHandler(params?: string) {
-    const paramsInfo = extractUserFromParams(params);
+    const paramsInfo = await extractUserFromParams(params);
 
     if (paramsInfo) {
         const maybeHero = paramsInfo.params;
         const heroId = getHeroIdFromName(maybeHero);
-        const playersHeroesInfo = await model.dotaApi.getPlayerHeroes(paramsInfo.user, heroId);
+        const playersHeroesInfo = await dotaApi.getPlayerHeroes(paramsInfo.user, heroId);
         if (playersHeroesInfo) {
             return prettyPrintPlayerHeroes(playersHeroesInfo, heroId !== undefined ? 1 : undefined);
         }

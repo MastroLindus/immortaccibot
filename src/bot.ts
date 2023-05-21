@@ -1,6 +1,4 @@
-import { getAwsParametersFromStore } from "./aws/parameterStore.js";
-import { dotaApi } from "./dota/dotaApi.js";
-import { model, nullParams, offlineParams, parameters } from "./model.js";
+import { isOffline } from "./model.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
 
@@ -16,40 +14,26 @@ type TelegramMessageEvent = {
 };
 
 export const telegrambot = async (event: TelegramEvent) => {
-    await fetchModelIfNeeded();
     const body = JSON.parse(event.body) as TelegramMessageEvent;
     let returnMessage;
 
     if (body?.message?.text && body?.message?.chat) {
         const { chat, text } = body.message;
         returnMessage = await parseAndHandleRequest(text);
-        if (returnMessage) {
+        if (returnMessage && !isOffline) {
             await sendTextToUser(chat.id, returnMessage);
         }
     }
 
-    if (model.isOffline) {
+    if (isOffline) {
+        console.log(`Response: ${returnMessage}`);
         return returnMessage || "NO RETURN MESSAGE";
     }
 
     return { statusCode: 200 };
 };
 
-async function fetchModelIfNeeded() {
-    if (!model._fetched) {
-        model.params = model.isOffline
-            ? offlineParams
-            : (await getAwsParametersFromStore(parameters)) ?? nullParams;
-        model.dotaApi = dotaApi();
-        model._fetched = true;
-    }
-}
-
 async function sendTextToUser(chatId: string, text: string) {
-    if (model.isOffline) {
-        console.log(`Chat ${chatId}: ${text}`);
-        return;
-    }
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     if (botToken) {
         return fetch(

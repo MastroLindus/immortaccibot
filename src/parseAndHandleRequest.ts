@@ -1,3 +1,4 @@
+import { listTables } from "./aws/dynamoStore.js";
 import { lastMatchHandler, playerHeroesHandler, wlHandler } from "./dota/dotaHandlers.js";
 import { echo, ciccio, pingAll, unknownHandler } from "./genericHandlers.js";
 import { quotesHandler, quoteStats } from "./quotesHandler.js";
@@ -13,6 +14,7 @@ const commandHandlers: Record<string, CommandHandler> = {
     dotalast: lastMatchHandler,
     dotawl: wlHandler,
     heroes: playerHeroesHandler,
+    listTables: listTables,
 };
 
 export async function parseAndHandleRequest(initialText: string) {

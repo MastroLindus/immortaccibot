@@ -4,10 +4,11 @@ import {
     DynamoDB,
     AttributeValue,
 } from "@aws-sdk/client-dynamodb";
-import { User, options } from "../model.js";
+import { User } from "../model.js";
+import { settings } from "../settings.js";
 
 // const client = new DynamoDBClient({ region: options.aws.region });
-const dynamo = new DynamoDB({ region: options.aws.region });
+const dynamo = new DynamoDB({ region: settings.aws.region });
 
 // export async function listTables() {
 //     const command = new ListTablesCommand({});

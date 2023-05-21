@@ -1,5 +1,5 @@
 import { dotaApi, nullDotaApi } from "./dota/dotaApi.js";
-import { getAwsParametersFromStore, nullParams } from "./getAwsParametersFromStore.js";
+import { getParameters, nullParams } from "./getParameters.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
 
@@ -10,9 +10,15 @@ export const model = {
     isOffline: process.env.IS_OFFLINE,
 };
 
+export const options = {
+    aws: {
+        region: "eu-west-1"
+    }
+};
+
 async function fetchModelIfNeeded() {
     if (!model._fetched) {
-        model.params = await getAwsParametersFromStore();
+        model.params = await getParameters();
         model.dotaApi = dotaApi();
         model._fetched = true;
     }

@@ -21,12 +21,6 @@ export async function getUsers(useOfflineUsers = isOffline) {
     return userCache;
 }
 
-export const options = {
-    aws: {
-        region: "eu-west-1",
-    },
-};
-
 const offlineUsers: ReadonlyArray<User> = [
     { user_id: "gino", dota_account: 171028175, alias: new Set(), notifications_enabled: "true" },
     { user_id: "ciccio", alias: new Set("dario"), notifications_enabled: "false" },

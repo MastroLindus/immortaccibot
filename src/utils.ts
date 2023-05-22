@@ -1,4 +1,4 @@
-import { getUsers } from "./model.js";
+import { getUsers } from "./model/users.js";
 
 export async function extractUserFromParams(initialParams?: string) {
     if (!initialParams) {

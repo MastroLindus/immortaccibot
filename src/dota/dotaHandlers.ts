@@ -61,7 +61,7 @@ function prettyPrintWl(wl: WinLose) {
     Win rate: ${truncatedRate}%`;
 }
 
-export async function lastMatchHandler(params?: string) {
+export async function lastMatchHandler(user_id: string, params?: string) {
     const userInfo = await extractUserFromParams(params);
     if (userInfo) {
         const data = await dotaApi.getRecentMatches(userInfo.user);
@@ -75,7 +75,7 @@ export async function lastMatchHandler(params?: string) {
     }
 }
 
-export async function wlHandler(params?: string) {
+export async function wlHandler(user_id: string, params?: string) {
     const paramsInfo = await extractUserFromParams(params);
     if (paramsInfo) {
         const maybeNumber = Number(paramsInfo.params);
@@ -93,7 +93,7 @@ function getHeroIdFromName(name: string) {
     return hero?.id;
 }
 
-export async function playerHeroesHandler(params?: string) {
+export async function playerHeroesHandler(user_id: string, params?: string) {
     const paramsInfo = await extractUserFromParams(params);
 
     if (paramsInfo) {

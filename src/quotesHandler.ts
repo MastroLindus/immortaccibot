@@ -10,7 +10,7 @@ function quoteToString(q: Quote): string {
     return `${q.author}: "${q.quote}"\n${q.timestamp}`;
 }
 
-export async function quoteStats() {
+export async function quoteStats(user_id: string) {
     const sums = quotesJson.reduce<Record<string, number>>((res, curr) => {
         res[curr.author.toLowerCase()] = (res[curr.author.toLowerCase()] ?? 0) + 1;
         return res;
@@ -23,7 +23,7 @@ export async function quoteStats() {
     return `Authors stats (with at least 10 quotes):\n${stats}`;
 }
 
-export async function quotesHandler(author?: string) {
+export async function quotesHandler(user_id: string, author?: string) {
     if (!author) {
         return quoteToString(pickRandomQuote(quotesJson));
     }

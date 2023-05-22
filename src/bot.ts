@@ -1,7 +1,7 @@
 import { debug } from "./logging.js";
-import { isOffline } from "./model.js";
 import { parseAndHandleRequest } from "./parseAndHandleRequest.js";
 import fetch from "node-fetch";
+import { settings } from "./settings.js";
 
 type TelegramEvent = {
     body: string;
@@ -12,6 +12,9 @@ type TelegramMessageEvent = {
         text?: string;
         chat?: { id: string };
     };
+    from?: {
+        username?: string;
+    };
 };
 
 export const telegrambot = async (event: TelegramEvent) => {
@@ -19,15 +22,15 @@ export const telegrambot = async (event: TelegramEvent) => {
     debug("Received request from telegram: ", body);
     let returnMessage;
 
-    if (body?.message?.text && body?.message?.chat) {
+    if (body?.message?.text && body?.message?.chat && body?.from?.username) {
         const { chat, text } = body.message;
-        returnMessage = await parseAndHandleRequest(text);
-        if (returnMessage && !isOffline) {
+        returnMessage = await parseAndHandleRequest(body.from.username, text);
+        if (returnMessage && !settings.isOffline) {
             await sendTextToUser(chat.id, returnMessage);
         }
     }
 
-    if (isOffline) {
+    if (settings.isOffline) {
         console.log(`Response: ${returnMessage}`);
         return returnMessage || "NO RETURN MESSAGE";
     }

@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { User } from "../model.js";
+import { User } from "../model/users.js";
 
 const baseUrl = "https://api.opendota.com/api";
 

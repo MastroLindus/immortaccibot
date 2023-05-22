@@ -7,7 +7,7 @@
     "test": "node --loader=ts-node/esm bin/test.ts",
     "lint": "eslint ./src/**/*.ts",
     "prettier": "prettier --check ./src",
-    "offline": "serverless offline --reloadHandler"
+    "offline": "TELEGRAM_BOT_TOKEN=none serverless offline --reloadHandler"
   },
   "type": "module",
   "author": "",

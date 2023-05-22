@@ -27,7 +27,6 @@ or use the visual code japa extension
 
 Todo:
 
--   fix serverless offline complaining about env variable
 -   better logging
 -   better mocking/patching global objects
 -   move quotes to dynamo

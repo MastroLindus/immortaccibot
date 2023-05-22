@@ -8,7 +8,7 @@ export type Lobby = {
     max_players?: number;
 };
 
-export async function getLobbyHandler(game_id?: string) {
+export async function getLobbyHandler(user_id: string, game_id?: string) {
     if (!game_id) {
         const lobbies = await getLobbies();
         return lobbies.map(printLobby).join("\n");
@@ -23,8 +23,8 @@ export async function getLobbyHandler(game_id?: string) {
 export async function joinLobbyHandler(user_id: string, params?: string) {
     if (params) {
         const paramsSplit = params.split(" ");
-        const max_players = paramsSplit.length >= 2 ? parseInt(paramsSplit[2], 10) : undefined;
-        const min_players = paramsSplit.length >= 1 ? parseInt(paramsSplit[1], 10) : undefined;
+        const max_players = paramsSplit.length >= 3 ? parseInt(paramsSplit[2], 10) : undefined;
+        const min_players = paramsSplit.length >= 2 ? parseInt(paramsSplit[1], 10) : undefined;
         const game_id = paramsSplit[0];
         return joinLobby(game_id, user_id, min_players, max_players);
     }
@@ -34,7 +34,13 @@ async function joinLobby(user_id: string, game_id: string, min_players = 2, max_
     const currentLobby = await getLobby(game_id);
     const lobby = currentLobby
         ? { ...currentLobby }
-        : { game_id, members: new Set(user_id), min_players, max_players, is_complete: false };
+        : {
+              game_id,
+              members: new Set(user_id),
+              min_players,
+              max_players: max_players ?? 0,
+              is_complete: false,
+          };
     if (
         !lobby.members.has(user_id) &&
         (!lobby.max_players || lobby.members.size < lobby.max_players)

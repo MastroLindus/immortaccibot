@@ -26,7 +26,7 @@ export async function joinLobbyHandler(user_id: string, params?: string) {
         const max_players = paramsSplit.length >= 3 ? parseInt(paramsSplit[2], 10) : undefined;
         const min_players = paramsSplit.length >= 2 ? parseInt(paramsSplit[1], 10) : undefined;
         const game_id = paramsSplit[0];
-        return joinLobby(game_id, user_id, min_players, max_players);
+        return joinLobby(user_id, game_id, min_players, max_players);
     }
 }
 
@@ -36,7 +36,7 @@ async function joinLobby(user_id: string, game_id: string, min_players = 2, max_
         ? { ...currentLobby }
         : {
               game_id,
-              members: new Set(user_id),
+              members: new Set<string>(),
               min_players,
               max_players: max_players ?? 0,
               is_complete: false,

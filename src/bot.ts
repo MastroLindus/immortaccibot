@@ -11,9 +11,9 @@ type TelegramMessageEvent = {
     message?: {
         text?: string;
         chat?: { id: string };
-    };
-    from?: {
-        username?: string;
+        from?: {
+            username?: string;
+        };
     };
 };
 
@@ -22,9 +22,9 @@ export const telegrambot = async (event: TelegramEvent) => {
     debug("Received request from telegram: ", body);
     let returnMessage;
 
-    if (body?.message?.text && body?.message?.chat && body?.from?.username) {
-        const { chat, text } = body.message;
-        returnMessage = await parseAndHandleRequest(body.from.username, text);
+    if (body?.message?.text && body?.message?.chat && body?.message?.from?.username) {
+        const { chat, text, from } = body.message;
+        returnMessage = await parseAndHandleRequest(from.username!, text);
         if (returnMessage && !settings.isOffline) {
             await sendTextToUser(chat.id, returnMessage);
         }

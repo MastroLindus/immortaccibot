@@ -31,8 +31,12 @@ function mapResultToUserLobbies(item: Record<string, AttributeValue>) {
 }
 
 function mapResultToLobbyAndUserLobby(results: ReadonlyArray<Record<string, AttributeValue>>) {
-    const [lobby, ...userLobbies] = results;
-    return [mapResultToLobby(lobby), userLobbies.map(mapResultToUserLobbies)] as const;
+    const lobby = results.find((r) => r["user_id"].S == "__lobby");
+    const userLobbies = results.filter((r) => r["user_id"].S != "__lobby");
+    return [
+        lobby ? mapResultToLobby(lobby) : undefined,
+        userLobbies.map(mapResultToUserLobbies),
+    ] as const;
 }
 
 export async function getLobby(game_id: string) {

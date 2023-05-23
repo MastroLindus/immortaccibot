@@ -117,6 +117,7 @@ async function leaveLobby(user_id: string, game_id: string) {
         return `${user_id} is not part of lobby ${game_id}`;
     }
     setUserLobby({ ...ownUserLobby, ttl: 1 });
+    setLobby({ ...currentLobby, current_players: currentLobby.current_players - 1 });
     return "Done!";
 }
 

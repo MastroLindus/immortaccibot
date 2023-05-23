@@ -105,7 +105,7 @@ async function joinLobby(user_id: string, game_id: string, timeLimit = 3600) {
     if (isNowComplete) {
         return notifyStart(game_id, [...userLobbies.map((u) => u.user_id), user_id]);
     }
-    return `Done! (Current players: ${newLobby.current_players}`;
+    return `Done! (Current players: ${newLobby.current_players})`;
 }
 
 async function startLobby(game_id: string) {
@@ -145,7 +145,7 @@ async function leaveLobby(user_id: string, game_id: string) {
     setUserLobby({ ...ownUserLobby, ttl: 1 });
     const newPlayerCount = currentLobby.current_players - 1;
     setLobby({ ...currentLobby, current_players: newPlayerCount });
-    return `one! (Current players: ${newPlayerCount}`;
+    return `Done! (Current players: ${newPlayerCount})`;
 }
 
 function printLobby(lobby: Lobby) {

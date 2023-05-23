@@ -1,6 +1,11 @@
 import { lastMatchHandler, playerHeroesHandler, wlHandler } from "./dota/dotaHandlers.js";
 import { echo, ciccio, pingAll, unknownHandler } from "./genericHandlers.js";
-import { joinLobbyHandler, getLobbyHandler } from "./model/lobbies.js";
+import {
+    joinLobbyHandler,
+    getLobbyHandler,
+    leaveLobbyHandler,
+    createLobbyHandler,
+} from "./model/lobbies.js";
 import { quotesHandler, quoteStats } from "./quotesHandler.js";
 
 type CommandHandler = (user_id: string, params?: string) => Promise<string | undefined>;
@@ -17,6 +22,8 @@ const commandHandlers: Record<string, CommandHandler> = {
     heroes: playerHeroesHandler,
     lobby: getLobbyHandler,
     join: joinLobbyHandler,
+    leave: leaveLobbyHandler,
+    create: createLobbyHandler,
 };
 
 export async function parseAndHandleRequest(user_id: string, initialText: string) {

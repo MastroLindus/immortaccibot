@@ -23,6 +23,9 @@ export type UserLobby = {
 export async function getLobbyHandler(user_id: string, game_id?: string) {
     if (!game_id) {
         const lobbies = await getLobbies();
+        if (lobbies.length == 0) {
+            return "No lobbies created yet, start one with /create!";
+        }
         return lobbies.map(printLobby).join("\n");
     }
     const lobby = await getLobby(game_id);
@@ -61,6 +64,12 @@ export async function leaveLobbyHandler(user_id: string, game_id?: string) {
     }
 }
 
+export async function startLobbyHandler(user_id: string, game_id?: string) {
+    if (game_id) {
+        return startLobby(game_id);
+    }
+}
+
 async function createLobby(game_id: string, min_players = 2, max_players?: number) {
     const currentLobby = await getLobby(game_id);
     if (currentLobby) {
@@ -94,14 +103,31 @@ async function joinLobby(user_id: string, game_id: string, timeLimit = 3600) {
     setLobby(newLobby);
     setUserLobby({ user_id, game_id, ttl: timeLimit });
     if (isNowComplete) {
-        const pingString = [...userLobbies.map((u) => u.user_id), user_id]
-            .map((id) => `@${id}`)
-            .join(" ");
-        return `Lobby ${game_id} Complete!
+        return notifyStart(game_id, [...userLobbies.map((u) => u.user_id), user_id]);
+    }
+    return `Done! (Current players: ${newLobby.current_players}`;
+}
+
+async function startLobby(game_id: string) {
+    const [lobby, userLobbies] = await getLobbyWithUserLobbies(game_id);
+    if (!lobby) {
+        return `Lobby ${game_id} doesn't exist!`;
+    }
+    if (lobby.current_players <= 0) {
+        return `Lobby ${game_id} doesn't have enough players!`;
+    }
+    setLobby({ ...lobby, is_complete: true });
+    return notifyStart(
+        game_id,
+        userLobbies.map((u) => u.user_id)
+    );
+}
+
+function notifyStart(game_id: string, userIds: ReadonlyArray<string>) {
+    const pingString = userIds.map((id) => `@${id}`).join(" ");
+    return `Lobby ${game_id} Complete!
         ${pingString}
         GO GO GO`;
-    }
-    return "Done!";
 }
 
 async function leaveLobby(user_id: string, game_id: string) {
@@ -117,8 +143,9 @@ async function leaveLobby(user_id: string, game_id: string) {
         return `${user_id} is not part of lobby ${game_id}`;
     }
     setUserLobby({ ...ownUserLobby, ttl: 1 });
-    setLobby({ ...currentLobby, current_players: currentLobby.current_players - 1 });
-    return "Done!";
+    const newPlayerCount = currentLobby.current_players - 1;
+    setLobby({ ...currentLobby, current_players: newPlayerCount });
+    return `one! (Current players: ${newPlayerCount}`;
 }
 
 function printLobby(lobby: Lobby) {

@@ -5,6 +5,7 @@ import {
     getLobbyHandler,
     leaveLobbyHandler,
     createLobbyHandler,
+    startLobbyHandler,
 } from "./model/lobbies.js";
 import { quotesHandler, quoteStats } from "./quotesHandler.js";
 
@@ -24,6 +25,7 @@ const commandHandlers: Record<string, CommandHandler> = {
     join: joinLobbyHandler,
     leave: leaveLobbyHandler,
     create: createLobbyHandler,
+    startLobby: startLobbyHandler,
 };
 
 export async function parseAndHandleRequest(user_id: string, initialText: string) {

@@ -36,7 +36,10 @@ function mapResultToLobbyAndUserLobby(results: ReadonlyArray<Record<string, Attr
 }
 
 export async function getLobby(game_id: string) {
-    const command = new GetItemCommand({ TableName: tableName, Key: { game_id: { S: game_id } } });
+    const command = new GetItemCommand({
+        TableName: tableName,
+        Key: { game_id: { S: game_id }, user_id: { S: "__lobby" } },
+    });
     try {
         const result = (await dynamoClient.send(command)).Item;
         if (result) {
@@ -113,7 +116,9 @@ export async function getLobbies(): Promise<ReadonlyArray<Lobby>> {
     const command = new ScanCommand({ TableName: tableName });
     try {
         const results = await dynamoClient.send(command);
-        return results.Items?.map(mapResultToLobby) ?? [];
+        return (
+            results.Items?.filter((r) => r["user_id"].S == "__lobby").map(mapResultToLobby) ?? []
+        );
     } catch (err) {
         console.error(err);
     }

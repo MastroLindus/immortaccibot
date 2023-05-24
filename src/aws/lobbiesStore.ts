@@ -34,9 +34,14 @@ function mapResultToLobbyAndUserLobby(results: ReadonlyArray<Record<string, Attr
     const lobby = results.find((r) => r["user_id"].S == "__lobby");
     const userLobbies = results.filter((r) => r["user_id"].S != "__lobby");
     return [
-        lobby ? mapResultToLobby(lobby) : undefined,
-        userLobbies.map(mapResultToUserLobbies),
+        lobby && !isExpired(lobby) ? mapResultToLobby(lobby) : undefined,
+        userLobbies.filter((l) => !isExpired(l)).map(mapResultToUserLobbies),
     ] as const;
+}
+
+function isExpired(result: Record<string, AttributeValue>) {
+    const now = Date.now() / 1000;
+    return !result["ttl"] || now >= parseInt(result["ttl"].N!, 10);
 }
 
 export async function getLobby(game_id: string) {
@@ -46,7 +51,7 @@ export async function getLobby(game_id: string) {
     });
     try {
         const result = (await dynamoClient.send(command)).Item;
-        if (result) {
+        if (result && !isExpired(result)) {
             return mapResultToLobby(result);
         }
     } catch (err) {

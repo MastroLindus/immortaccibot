@@ -82,7 +82,7 @@ export async function getLobbyWithUserLobbies(
 }
 
 function getTTL(expireInSeconds = 3600) {
-    return String(Math.floor(Date.now() / 1000) + 3600);
+    return String(Math.floor(Date.now() / 1000) + expireInSeconds);
 }
 
 export async function setUserLobby(userLobby: UserLobby) {

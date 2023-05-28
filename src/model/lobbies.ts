@@ -80,7 +80,7 @@ export async function startLobbyHandler(user_id: string, game_id?: string) {
     }
 }
 
-async function createLobby(game_id: string, min_players = 2, max_players?: number) {
+async function createLobby(game_id: string, min_players?: number, max_players?: number) {
     const currentLobby = await getLobby(game_id);
     if (currentLobby) {
         return `Lobby ${game_id} already exists`;

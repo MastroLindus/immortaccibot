@@ -44,7 +44,12 @@ export async function joinLobbyHandler(user_id: string, params?: string) {
             const timeLimitParam = paramsSplit[1];
             timeLimit = parseInt(timeLimitParam, 10);
         }
-        return joinLobby(user_id, game_id, timeLimit);
+        if (game_id.indexOf("|") == -1) {
+            return joinLobby(user_id, game_id, timeLimit);
+        }
+        const game_ids = game_id.split("|");
+        const rest = await Promise.all(game_ids.map((gId) => joinLobby(user_id, gId, timeLimit)));
+        return getLobbyHandler(user_id);
     }
 }
 
@@ -54,7 +59,12 @@ export async function createLobbyHandler(user_id: string, params?: string) {
         const max_players = paramsSplit.length >= 3 ? parseInt(paramsSplit[2], 10) : undefined;
         const min_players = paramsSplit.length >= 2 ? parseInt(paramsSplit[1], 10) : undefined;
         const game_id = paramsSplit[0];
-        return createLobby(game_id, min_players, max_players);
+        if (game_id.indexOf("|") == -1) {
+            return createLobby(game_id, min_players, max_players);
+        }
+        const game_ids = game_id.split("|");
+        const rest = await Promise.all(game_ids.map((gId) => createLobby(gId)));
+        return getLobbyHandler(user_id);
     }
 }
 
@@ -75,10 +85,11 @@ async function createLobby(game_id: string, min_players = 2, max_players?: numbe
     if (currentLobby) {
         return `Lobby ${game_id} already exists`;
     }
-    const newLobby = {
+    const defaultGameSettings = knownLobbiesSettings[game_id] ?? {};
+    const newLobby: Lobby = {
         game_id,
-        min_players,
-        max_players: max_players ?? 0,
+        min_players: min_players ?? defaultGameSettings["min"] ?? 2,
+        max_players: max_players ?? defaultGameSettings["max"] ?? 0,
         is_complete: false,
         current_players: 0,
     };
@@ -86,10 +97,11 @@ async function createLobby(game_id: string, min_players = 2, max_players?: numbe
     return `Lobby ${game_id} created!`;
 }
 
-async function joinLobby(user_id: string, game_id: string, timeLimit = 3600) {
+async function joinLobby(user_id: string, game_id: string, timeLimit = 3600): Promise<string> {
     const [currentLobby, userLobbies] = await getLobbyWithUserLobbies(game_id);
     if (!currentLobby) {
-        return `Lobby ${game_id} doesn't exist, create it with /create <game_id>`;
+        await createLobby(game_id);
+        return joinLobby(user_id, game_id, timeLimit);
     }
     if (currentLobby.is_complete) {
         return `Lobby ${game_id} is already completed, too late!`;
@@ -155,3 +167,10 @@ function printLobby(lobby: Lobby) {
     const complete = lobby.is_complete ? "COMPLETE" : "";
     return `${lobby.game_id} ${complete} ${current} ${minPlayers} ${maxPlayers}`;
 }
+
+const knownLobbiesSettings: Record<string, { min: number; max?: number }> = {
+    dota: { min: 4, max: 5 },
+    pummel: { min: 4 },
+    hunt: { min: 3, max: 3 },
+    golf: { min: 4 },
+};

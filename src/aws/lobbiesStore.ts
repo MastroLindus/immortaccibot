@@ -60,7 +60,7 @@ export async function getLobby(game_id: string) {
 }
 
 export async function getLobbyWithUserLobbies(
-    game_id: string
+    game_id: string,
 ): Promise<readonly [Lobby | undefined, UserLobby[]]> {
     const command = new QueryCommand({
         TableName: tableName,

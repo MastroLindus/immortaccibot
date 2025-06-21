@@ -43,8 +43,8 @@ async function sendTextToUser(chatId: string, text: string) {
     if (botToken) {
         return fetch(
             `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(
-                text
-            )}`
+                text,
+            )}`,
         );
     }
     console.log("bot token not found in env variable");

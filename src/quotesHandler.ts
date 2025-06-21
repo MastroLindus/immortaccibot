@@ -1,4 +1,4 @@
-import quotesJson from "../resources/quotes.json" assert { type: "json" };
+import quotesJson from "../resources/quotes.json" with { type: "json" };
 
 type Quote = (typeof quotesJson)[number];
 

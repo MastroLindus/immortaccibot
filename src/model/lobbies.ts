@@ -131,7 +131,7 @@ async function startLobby(game_id: string) {
     setLobby({ ...lobby, is_complete: true });
     return notifyStart(
         game_id,
-        userLobbies.map((u) => u.user_id)
+        userLobbies.map((u) => u.user_id),
     );
 }
 

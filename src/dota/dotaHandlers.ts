@@ -1,4 +1,4 @@
-import heroJson from "../../resources/dotaHeroes.json" assert { type: "json" };
+import heroJson from "../../resources/dotaHeroes.json" with { type: "json" };
 import { extractUserFromParams, timeToCETString } from "../utils.js";
 import { Match, MatchPlayerInfo, PlayerHero, WinLose, dotaApi } from "./dotaApi.js";
 
@@ -65,7 +65,7 @@ export async function lastMatchHandler(user_id: string, params?: string) {
     const userInfo = await extractUserFromParams(params);
     if (userInfo) {
         const data = await dotaApi.getRecentMatches(userInfo.user);
-        if (data) {
+        if (data && !!data[0]) {
             const matchInfo = await dotaApi.getMatch(data[0].match_id);
             if (matchInfo) {
                 return prettyPrint(matchInfo);
@@ -88,7 +88,7 @@ export async function wlHandler(user_id: string, params?: string) {
 
 function getHeroIdFromName(name: string) {
     const hero = heroJson.find(
-        (h) => h.localized_name.toLocaleLowerCase() == name.toLocaleLowerCase()
+        (h) => h.localized_name.toLocaleLowerCase() == name.toLocaleLowerCase(),
     );
     return hero?.id;
 }
